@@ -4,11 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public class OdeehDuplicateException extends OdeehApplicationException {
 
-    public OdeehDuplicateException(String message) {
+    public OdeehDuplicateException() {
         super(
-                message,
-                "TEST",
-                HttpStatus.BAD_REQUEST.value()
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                HttpStatus.CONFLICT.value()
         );
     }
 }

@@ -1,4 +1,4 @@
-package be.odeeh.studio.odeehservice.adapter.web.mapper;
+package be.odeeh.studio.odeehservice.adapter.in.web.mapper;
 
 import be.odeeh.studio.odeehservice.adapter.in.web.dto.BaseUserResponse;
 import be.odeeh.studio.odeehservice.adapter.in.web.mapper.BaseUserMapper;

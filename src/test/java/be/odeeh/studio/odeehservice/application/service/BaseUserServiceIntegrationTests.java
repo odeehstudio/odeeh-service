@@ -1,6 +1,6 @@
 package be.odeeh.studio.odeehservice.application.service;
 
-import be.odeeh.studio.odeehservice.adapter.out.repository.BaseUserRepository;
+import be.odeeh.studio.odeehservice.adapter.out.repository.BaseUserJpaRepository;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
     private BaseUserService service;
 
     @Autowired
-    private BaseUserRepository repository;
+    private BaseUserJpaRepository repository;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +60,8 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
         // Act & Assert
         OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () -> service.createBaseUser(email, providerUid));
 
-        assertThat(exception.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(exception.getCode()).isEqualTo("TEST");
+        HttpStatus expectedStatus = HttpStatus.CONFLICT;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
 }

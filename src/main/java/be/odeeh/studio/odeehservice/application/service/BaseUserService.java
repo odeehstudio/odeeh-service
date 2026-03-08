@@ -1,6 +1,6 @@
 package be.odeeh.studio.odeehservice.application.service;
 
-import be.odeeh.studio.odeehservice.adapter.out.repository.BaseUserRepository;
+import be.odeeh.studio.odeehservice.adapter.out.repository.BaseUserJpaRepository;
 import be.odeeh.studio.odeehservice.application.port.BaseUserServicePort;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class BaseUserService implements BaseUserServicePort {
 
-    private final BaseUserRepository repository;
+    private final BaseUserJpaRepository repository;
 
     @Override
     public BaseUserEntity createBaseUser(String email, String uid) {
         if (repository.existsByEmailOrProviderUid(email, uid)) {
-            throw new OdeehDuplicateException("BaseUserEntity with given values already exists");
+            throw new OdeehDuplicateException();
         }
 
         BaseUserEntity entity = BaseUserEntity.builder()

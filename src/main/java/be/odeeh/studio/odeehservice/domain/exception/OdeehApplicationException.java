@@ -8,8 +8,8 @@ public abstract class OdeehApplicationException extends RuntimeException {
     private final String code;
     private final int status;
 
-    protected OdeehApplicationException(String message, String code, int status) {
-        super(message);
+    protected OdeehApplicationException(String code, int status) {
+        super(code);
         this.code = code;
         this.status = status;
     }

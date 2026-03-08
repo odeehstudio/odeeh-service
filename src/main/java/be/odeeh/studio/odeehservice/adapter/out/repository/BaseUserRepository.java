@@ -1,13 +1,26 @@
 package be.odeeh.studio.odeehservice.adapter.out.repository;
 
+import be.odeeh.studio.odeehservice.application.port.BaseUserRepositoryPort;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Repository
-public interface BaseUserRepository extends JpaRepository<BaseUserEntity, UUID> {
+@Component
+@AllArgsConstructor
+public class BaseUserRepository implements BaseUserRepositoryPort {
 
-    boolean existsByEmailOrProviderUid(String email, String uid);
+    private final BaseUserJpaRepository repository;
+
+    @Override
+    public BaseUserEntity findForAuthenticatedBaseUser(String authenticatedProviderUid) {
+        return repository.findByProviderUid(authenticatedProviderUid).orElseThrow(OdeehNotFoundException::new);
+    }
+
+    @Override
+    public BaseUserEntity findById(UUID id) {
+        return repository.findById(id).orElseThrow(OdeehNotFoundException::new);
+    }
 }
