@@ -75,7 +75,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        buildAndSaveFriendshipRequestEntity(requester, receiver);
+        buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act & Assert
         OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () ->
@@ -98,7 +98,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act
         service.dismissFriendshipRequest(existingEntity.getId(), requester.getProviderUid());
@@ -118,7 +118,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act & Assert
         OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
@@ -141,7 +141,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act
         service.acceptFriendshipRequest(existingEntity.getId(), receiver.getProviderUid());
@@ -170,7 +170,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act & Assert
         OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
@@ -193,7 +193,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act
         service.denyFriendshipRequest(existingEntity.getId(), receiver.getProviderUid());
@@ -213,7 +213,7 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
         // Act & Assert
         OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
@@ -236,8 +236,8 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
         BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
 
-        FriendshipRequestEntity sendFriendshipRequest = buildAndSaveFriendshipRequestEntity(requester, receiver);
-        FriendshipRequestEntity receivedFriendshipRequest = buildAndSaveFriendshipRequestEntity(receiver, requester);
+        FriendshipRequestEntity sendFriendshipRequest = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
+        FriendshipRequestEntity receivedFriendshipRequest = buildAndSaveFriendshipRequestEntity(receiver, requester, FriendshipRequestStatus.PENDING);
 
         // Act
         List<FriendshipRequestEntity> receivedFriendshipRequests = service.listReceivedFriendshipRequests(requesterProviderUid);
@@ -246,9 +246,35 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         // Assert
         assertThat(receivedFriendshipRequests).hasSize(1);
         assertThat(actual.getId()).isEqualTo(receivedFriendshipRequest.getId());
-        assertThat(actual.getRequesterId()).isEqualTo(receiver.getId());
-        assertThat(actual.getReceiverId()).isEqualTo(requester.getId());
+        assertThat(actual.getRequesterId()).isEqualTo(receivedFriendshipRequest.getRequesterId());
+        assertThat(actual.getReceiverId()).isEqualTo(receivedFriendshipRequest.getReceiverId());
         assertThat(actual.getStatus()).isEqualTo(FriendshipRequestStatus.PENDING);
+    }
+
+    @Test
+    void listAcceptedFriendshipRequests_shouldReturnListOfAcceptedFriendshipRequestEntities() {
+        // Arrange
+        String requesterEmail = "requester@mail.com";
+        String receiverEmail = "receiver@mail.com";
+        String requesterProviderUid = UUID.randomUUID().toString();
+        String receiverProviderUid = UUID.randomUUID().toString();
+
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+
+        FriendshipRequestEntity pendingFriendshipRequest = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
+        FriendshipRequestEntity acceptedFriendshipRequest = buildAndSaveFriendshipRequestEntity(receiver, requester, FriendshipRequestStatus.ACCEPTED);
+
+        // Act
+        List<FriendshipRequestEntity> receivedFriendshipRequests = service.listAcceptedFriendshipRequests(requesterProviderUid);
+        FriendshipRequestEntity actual = receivedFriendshipRequests.get(0);
+
+        // Assert
+        assertThat(receivedFriendshipRequests).hasSize(1);
+        assertThat(actual.getId()).isEqualTo(acceptedFriendshipRequest.getId());
+        assertThat(actual.getRequesterId()).isEqualTo(acceptedFriendshipRequest.getRequesterId());
+        assertThat(actual.getReceiverId()).isEqualTo(acceptedFriendshipRequest.getReceiverId());
+        assertThat(actual.getStatus()).isEqualTo(FriendshipRequestStatus.ACCEPTED);
     }
 
     private BaseUserEntity buildAndSaveBaseUserEntity(
@@ -265,12 +291,13 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
 
     private FriendshipRequestEntity buildAndSaveFriendshipRequestEntity(
             BaseUserEntity requester,
-            BaseUserEntity receiver
+            BaseUserEntity receiver,
+            FriendshipRequestStatus status
     ) {
         FriendshipRequestEntity existingEntity = FriendshipRequestEntity.builder()
                 .requesterId(requester.getId())
                 .receiverId(receiver.getId())
-                .status(FriendshipRequestStatus.PENDING)
+                .status(status)
                 .build();
 
         return repository.save(existingEntity);

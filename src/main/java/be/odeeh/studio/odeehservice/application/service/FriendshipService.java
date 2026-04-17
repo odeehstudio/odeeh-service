@@ -88,8 +88,16 @@ public class FriendshipService implements FriendshipServicePort {
     public List<FriendshipRequestEntity> listReceivedFriendshipRequests(String authenticatedProviderUid) {
         BaseUserEntity authenticatedUser = baseUserRepository.findForAuthenticatedBaseUser(authenticatedProviderUid);
 
-        return repository.findByReceiverId(authenticatedUser.getId());
+        return repository.findByReceiverIdAndStatus(authenticatedUser.getId(), FriendshipRequestStatus.PENDING);
     }
+
+    @Override
+    public List<FriendshipRequestEntity> listAcceptedFriendshipRequests(String authenticatedProviderUid) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findForAuthenticatedBaseUser(authenticatedProviderUid);
+
+        return repository.findByReceiverIdAndStatus(authenticatedUser.getId(), FriendshipRequestStatus.ACCEPTED);
+    }
+
 
     private FriendshipRequestEntity findFriendshipRequest(UUID id) {
         return repository.findById(id).orElseThrow(OdeehNotFoundException::new);

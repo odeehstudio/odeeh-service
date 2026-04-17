@@ -15,4 +15,6 @@ public interface FriendshipServicePort {
     void denyFriendshipRequest(UUID requestId, String authenticatedProviderUid);
 
     List<FriendshipRequestEntity> listReceivedFriendshipRequests(String authenticatedProviderUid);
+
+    List<FriendshipRequestEntity> listAcceptedFriendshipRequests(String authenticatedProviderUid);
 }
