@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -81,6 +82,13 @@ public class FriendshipService implements FriendshipServicePort {
         }
 
         repository.delete(entity);
+    }
+
+    @Override
+    public List<FriendshipRequestEntity> listReceivedFriendshipRequests(String authenticatedProviderUid) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findForAuthenticatedBaseUser(authenticatedProviderUid);
+
+        return repository.findByReceiverId(authenticatedUser.getId());
     }
 
     private FriendshipRequestEntity findFriendshipRequest(UUID id) {

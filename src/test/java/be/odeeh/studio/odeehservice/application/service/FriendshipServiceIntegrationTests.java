@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -222,6 +223,32 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void listReceivedFriendshipRequests_shouldReturnListOfReceivedFriendshipRequestEntities() {
+        // Arrange
+        String requesterEmail = "requester@mail.com";
+        String receiverEmail = "receiver@mail.com";
+        String requesterProviderUid = UUID.randomUUID().toString();
+        String receiverProviderUid = UUID.randomUUID().toString();
+
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+
+        FriendshipRequestEntity sendFriendshipRequest = buildAndSaveFriendshipRequestEntity(requester, receiver);
+        FriendshipRequestEntity receivedFriendshipRequest = buildAndSaveFriendshipRequestEntity(receiver, requester);
+
+        // Act
+        List<FriendshipRequestEntity> receivedFriendshipRequests = service.listReceivedFriendshipRequests(requesterProviderUid);
+        FriendshipRequestEntity actual = receivedFriendshipRequests.get(0);
+
+        // Assert
+        assertThat(receivedFriendshipRequests).hasSize(1);
+        assertThat(actual.getId()).isEqualTo(receivedFriendshipRequest.getId());
+        assertThat(actual.getRequesterId()).isEqualTo(receiver.getId());
+        assertThat(actual.getReceiverId()).isEqualTo(requester.getId());
+        assertThat(actual.getStatus()).isEqualTo(FriendshipRequestStatus.PENDING);
     }
 
     private BaseUserEntity buildAndSaveBaseUserEntity(

@@ -1,5 +1,8 @@
 package be.odeeh.studio.odeehservice.application.port;
 
+import be.odeeh.studio.odeehservice.domain.entity.FriendshipRequestEntity;
+
+import java.util.List;
 import java.util.UUID;
 
 public interface FriendshipServicePort {
@@ -10,4 +13,6 @@ public interface FriendshipServicePort {
     void acceptFriendshipRequest(UUID requestId, String authenticatedProviderUid);
 
     void denyFriendshipRequest(UUID requestId, String authenticatedProviderUid);
+
+    List<FriendshipRequestEntity> listReceivedFriendshipRequests(String authenticatedProviderUid);
 }
