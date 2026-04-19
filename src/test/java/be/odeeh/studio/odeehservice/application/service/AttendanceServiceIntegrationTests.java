@@ -3,6 +3,7 @@ package be.odeeh.studio.odeehservice.application.service;
 import be.odeeh.studio.odeehservice.adapter.out.repository.*;
 import be.odeeh.studio.odeehservice.application.model.Attendance;
 import be.odeeh.studio.odeehservice.domain.entity.*;
+import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -177,6 +178,92 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         );
 
         HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void deleteAttendance_shouldDeleteAttendanceEntity() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance attendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description("Description")
+                .friends(List.of())
+                .build();
+
+        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+
+        // Act
+        service.deleteAttendance(providerUid, attendanceEntity.getId());
+
+        // Assert
+        assertThat(repository.findById(attendanceEntity.getId())).isEmpty();
+    }
+
+    @Test
+    void deleteAttendance_shouldThrowOdeehNotFoundException_whenNoAttendanceEntityFound() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance attendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description("Description")
+                .friends(List.of())
+                .build();
+
+        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+
+        // Act & Assert
+        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+                service.deleteAttendance(providerUid, UUID.randomUUID())
+        );
+
+        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void deleteAttendance_shouldThrowOdeehBadRequestException_whenAttendanceNotByAuthenticatedUser() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+        String requesterUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        BaseUserEntity requesterBaseUserEntity = buildAndSaveBaseUserEntity(requesterUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance attendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description("Description")
+                .friends(List.of())
+                .build();
+
+        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+
+        // Act & Assert
+        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
+                service.deleteAttendance(requesterUid, attendanceEntity.getId())
+        );
+
+        HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }

@@ -8,11 +8,14 @@ import be.odeeh.studio.odeehservice.application.port.EventRepositoryPort;
 import be.odeeh.studio.odeehservice.domain.entity.AttendanceEntity;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.entity.EventEntity;
+import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
+import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,5 +52,15 @@ public class AttendanceService implements AttendanceServicePort {
                 .build();
 
         return repository.save(entity);
+    }
+
+    @Override
+    public void deleteAttendance(String authenticatedProviderUid, UUID id) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findForAuthenticatedBaseUser(authenticatedProviderUid);
+        AttendanceEntity entity = repository.findById(id).orElseThrow(OdeehNotFoundException::new);
+
+        if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();
+
+        repository.delete(entity);
     }
 }
