@@ -31,6 +31,7 @@ public class AttendanceService implements AttendanceServicePort {
                 .baseUserId(authenticatedUser.getId())
                 .score(attendance.score())
                 .hasPictures(Boolean.FALSE)
+                .description(attendance.description())
                 .build();
 
         return repository.save(entity);

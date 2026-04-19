@@ -3,10 +3,7 @@ package be.odeeh.studio.odeehservice.adapter.in.web.mapper;
 import be.odeeh.studio.odeehservice.adapter.in.web.dto.AttendanceRequest;
 import be.odeeh.studio.odeehservice.application.model.Attendance;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
-import org.mapstruct.BeforeMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
 
 import java.math.BigDecimal;
 
@@ -33,5 +30,11 @@ public interface AttendanceMapper {
 
     @Mapping(source = "eventId", target = "eventId")
     @Mapping(source = "score", target = "score")
+    @Mapping(source = "description", target = "description", qualifiedByName = "trim")
     Attendance map(AttendanceRequest src);
+
+    @Named("trim")
+    default String trim(String src) {
+        return src != null ? src.trim() : null;
+    }
 }

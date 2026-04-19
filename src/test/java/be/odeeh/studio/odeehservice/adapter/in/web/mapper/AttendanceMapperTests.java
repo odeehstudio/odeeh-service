@@ -3,7 +3,6 @@ package be.odeeh.studio.odeehservice.adapter.in.web.mapper;
 import be.odeeh.studio.odeehservice.adapter.in.web.dto.AttendanceRequest;
 import be.odeeh.studio.odeehservice.application.model.Attendance;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
-import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -23,9 +22,12 @@ public class AttendanceMapperTests {
     @Test
     void map_shouldMapRequestToApplicationModel() {
         // Arrange
+        String description = "  Test description  ";
+
         AttendanceRequest src = AttendanceRequest.builder()
                 .eventId(UUID.randomUUID())
                 .score(BigDecimal.TEN)
+                .description(description)
                 .build();
 
         // Act
@@ -34,6 +36,25 @@ public class AttendanceMapperTests {
         // Assert
         assertThat(attendance.eventId()).isEqualTo(src.eventId());
         assertThat(attendance.score()).isEqualTo(src.score());
+        assertThat(attendance.description()).isEqualTo(description.trim());
+    }
+
+    @Test
+    void map_shouldMapRequestToApplicationModel_withoutOptionals() {
+        // Arrange
+        AttendanceRequest src = AttendanceRequest.builder()
+                .eventId(UUID.randomUUID())
+                .score(BigDecimal.TEN)
+                .description(null)
+                .build();
+
+        // Act
+        Attendance attendance = mapper.map(src);
+
+        // Assert
+        assertThat(attendance.eventId()).isEqualTo(src.eventId());
+        assertThat(attendance.score()).isEqualTo(src.score());
+        assertThat(attendance.description()).isNull();
     }
 
     @Test

@@ -8,6 +8,7 @@ import java.util.UUID;
 @Builder
 public record AttendanceRequest(
         UUID eventId,
-        BigDecimal score
+        BigDecimal score,
+        String description
 ) {
 }

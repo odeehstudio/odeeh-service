@@ -59,6 +59,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         Attendance attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
+                .description("Description")
                 .build();
 
         // Act
@@ -70,6 +71,37 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getEventId()).isEqualTo(eventEntity.getId());
         assertThat(actual.getScore()).isEqualTo(attendance.score());
         assertThat(actual.getHasPictures()).isEqualTo(Boolean.FALSE);
+        assertThat(actual.getDescription()).isEqualTo(attendance.description());
+        assertThat(actual.getCreatedAt()).isNotNull();
+        assertThat(actual.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    void createAttendance_shouldSaveAndReturnNewAttendanceEntity_withoutOptionals() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance attendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description(null)
+                .build();
+
+        // Act
+        AttendanceEntity actual = service.createAttendance(providerUid, attendance);
+
+        // Assert
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual.getBaseUserId()).isEqualTo(baseUserEntity.getId());
+        assertThat(actual.getEventId()).isEqualTo(eventEntity.getId());
+        assertThat(actual.getScore()).isEqualTo(attendance.score());
+        assertThat(actual.getHasPictures()).isEqualTo(Boolean.FALSE);
+        assertThat(actual.getDescription()).isEqualTo(attendance.description());
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
     }
