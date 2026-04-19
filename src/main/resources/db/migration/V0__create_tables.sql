@@ -58,3 +58,20 @@ CREATE TABLE event (
     FOREIGN KEY (venue_id) REFERENCES venue(id) ON DELETE CASCADE,
     FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE
 );
+
+CREATE TABLE attendance (
+    id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_id        UUID            NOT NULL,
+    base_user_id    UUID            NOT NULL,
+    score           DECIMAL(4, 2)   NOT NULL,
+    description     TEXT,
+    has_pictures    BOOLEAN         NOT NULL    DEFAULT FALSE,
+    friends         TEXT,
+    created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
+    FOREIGN KEY (base_user_id) REFERENCES base_user(id) ON DELETE CASCADE,
+
+    UNIQUE(event_id, base_user_id)
+);
