@@ -268,6 +268,109 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
 
+    @Test
+    void updateAttendance_shouldUpdateAttendanceEntity() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+        String friendProviderUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        BaseUserEntity friendEntity = buildAndSaveBaseUserEntity(friendProviderUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance originalAttendance = Attendance.builder()
+                .score(BigDecimal.ZERO)
+                .eventId(eventEntity.getId())
+                .description("Original")
+                .friends(List.of())
+                .build();
+
+        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, originalAttendance);
+
+        Attendance updatedAttendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description("Updated with friends")
+                .friends(List.of(friendEntity.getId()))
+                .build();
+
+        // Act
+        AttendanceEntity actual = service.updateAttendance(providerUid, attendanceEntity.getId(), updatedAttendance);
+
+        // Assert
+        assertThat(actual.getScore()).isEqualTo(updatedAttendance.score());
+        assertThat(actual.getDescription()).isEqualTo(updatedAttendance.description());
+        assertThat(actual.getFriends()).isEqualTo(friendEntity.getId().toString());
+    }
+
+    @Test
+    void updateAttendance_shouldThrowOdeehNotFoundException_whenAttendanceNotFound() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+        buildAndSaveBaseUserEntity(providerUid);
+
+        Attendance attendance = Attendance.builder().build();
+
+        // Act & Assert
+        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+                service.updateAttendance(providerUid, UUID.randomUUID(), attendance)
+        );
+
+        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void updateAttendance_shouldThrowOdeehBadRequestException_whenAttendanceNotByAuthenticatedUser() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+        String otherProviderUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        BaseUserEntity otherUserEntity = buildAndSaveBaseUserEntity(otherProviderUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance attendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description("Description")
+                .friends(List.of())
+                .build();
+
+        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+
+        // Act & Assert
+        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
+                service.updateAttendance(otherProviderUid, attendanceEntity.getId(), attendance)
+        );
+
+        HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void updateAttendance_shouldThrowOdeehNotFoundException_whenAuthenticatedUserNotFound() {
+        // Arrange
+        String nonExistentProviderUid = UUID.randomUUID().toString();
+
+        Attendance attendance = Attendance.builder().build();
+
+        // Act & Assert
+        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+                service.updateAttendance(nonExistentProviderUid, UUID.randomUUID(), attendance)
+        );
+
+        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
     private BaseUserEntity buildAndSaveBaseUserEntity(String providerUid) {
         BaseUserEntity entity = BaseUserEntity.builder()
                 .email(UUID.randomUUID().toString())

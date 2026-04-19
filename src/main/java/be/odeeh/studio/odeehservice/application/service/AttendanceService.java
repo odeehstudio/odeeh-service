@@ -36,20 +36,28 @@ public class AttendanceService implements AttendanceServicePort {
             throw new OdeehDuplicateException();
         }
 
-        String friends = attendance.friends()
-                .stream()
-                .map(baseUserRepository::findById)
-                .map(e -> e.getId().toString())
-                .collect(Collectors.joining(","));
-
         AttendanceEntity entity = AttendanceEntity.builder()
                 .eventId(eventEntity.getId())
                 .baseUserId(authenticatedUser.getId())
                 .score(attendance.score())
                 .hasPictures(Boolean.FALSE)
                 .description(attendance.description())
-                .friends(friends)
+                .friends(map(attendance))
                 .build();
+
+        return repository.save(entity);
+    }
+
+    @Override
+    public AttendanceEntity updateAttendance(String authenticatedProviderUid, UUID id, Attendance attendance) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findForAuthenticatedBaseUser(authenticatedProviderUid);
+        AttendanceEntity entity = repository.findById(id).orElseThrow(OdeehNotFoundException::new);
+
+        if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();
+
+        entity.setScore(attendance.score());
+        entity.setDescription(attendance.description());
+        entity.setFriends(map(attendance));
 
         return repository.save(entity);
     }
@@ -62,5 +70,13 @@ public class AttendanceService implements AttendanceServicePort {
         if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();
 
         repository.delete(entity);
+    }
+
+    private String map(Attendance attendance) {
+        return attendance.friends()
+                .stream()
+                .map(baseUserRepository::findById)
+                .map(e -> e.getId().toString())
+                .collect(Collectors.joining(","));
     }
 }

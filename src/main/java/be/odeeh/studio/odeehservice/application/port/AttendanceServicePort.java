@@ -8,5 +8,7 @@ import java.util.UUID;
 public interface AttendanceServicePort {
     AttendanceEntity createAttendance(String authenticatedProviderUid, Attendance attendance);
 
+    AttendanceEntity updateAttendance(String authenticatedProviderUid, UUID id, Attendance attendance);
+
     void deleteAttendance(String authenticatedProviderUid, UUID id);
 }
