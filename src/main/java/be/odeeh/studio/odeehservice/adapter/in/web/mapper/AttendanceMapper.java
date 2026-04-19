@@ -6,6 +6,8 @@ import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
 import org.mapstruct.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AttendanceMapper {
@@ -31,10 +33,16 @@ public interface AttendanceMapper {
     @Mapping(source = "eventId", target = "eventId")
     @Mapping(source = "score", target = "score")
     @Mapping(source = "description", target = "description", qualifiedByName = "trim")
+    @Mapping(source = "friends", target = "friends", qualifiedByName = "sanitizeUUIDs")
     Attendance map(AttendanceRequest src);
 
     @Named("trim")
     default String trim(String src) {
         return src != null ? src.trim() : null;
+    }
+
+    @Named("sanitizeUUIDs")
+    default List<UUID> sanitizeUUIDs(List<UUID> src) {
+        return src != null ? src.stream().distinct().toList() : List.of();
     }
 }

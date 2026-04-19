@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,11 +24,14 @@ public class AttendanceMapperTests {
     void map_shouldMapRequestToApplicationModel() {
         // Arrange
         String description = "  Test description  ";
+        UUID friendUUID = UUID.randomUUID();
+        List<UUID> friends = List.of(friendUUID, friendUUID);
 
         AttendanceRequest src = AttendanceRequest.builder()
                 .eventId(UUID.randomUUID())
                 .score(BigDecimal.TEN)
                 .description(description)
+                .friends(friends)
                 .build();
 
         // Act
@@ -37,6 +41,7 @@ public class AttendanceMapperTests {
         assertThat(attendance.eventId()).isEqualTo(src.eventId());
         assertThat(attendance.score()).isEqualTo(src.score());
         assertThat(attendance.description()).isEqualTo(description.trim());
+        assertThat(attendance.friends()).isEqualTo(List.of(friendUUID));
     }
 
     @Test
@@ -46,6 +51,7 @@ public class AttendanceMapperTests {
                 .eventId(UUID.randomUUID())
                 .score(BigDecimal.TEN)
                 .description(null)
+                .friends(null)
                 .build();
 
         // Act
@@ -55,6 +61,7 @@ public class AttendanceMapperTests {
         assertThat(attendance.eventId()).isEqualTo(src.eventId());
         assertThat(attendance.score()).isEqualTo(src.score());
         assertThat(attendance.description()).isNull();
+        assertThat(attendance.friends()).isEmpty();
     }
 
     @Test

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,8 +52,10 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     void createAttendance_shouldSaveAndReturnNewAttendanceEntity() {
         // Arrange
         String providerUid = UUID.randomUUID().toString();
+        String friendProviderUid = UUID.randomUUID().toString();
 
         BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        BaseUserEntity friendBaseUserEntity = buildAndSaveBaseUserEntity(friendProviderUid);
         VenueEntity venueEntity = buildAndSaveVenueEntity();
         ArtistEntity artistEntity = buildAndSaveArtistEntity();
         EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
@@ -61,6 +64,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Description")
+                .friends(List.of(friendBaseUserEntity.getId()))
                 .build();
 
         // Act
@@ -73,6 +77,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getScore()).isEqualTo(attendance.score());
         assertThat(actual.getHasPictures()).isEqualTo(Boolean.FALSE);
         assertThat(actual.getDescription()).isEqualTo(attendance.description());
+        assertThat(actual.getFriends()).isEqualTo(friendBaseUserEntity.getId().toString());
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
     }
@@ -91,6 +96,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description(null)
+                .friends(List.of())
                 .build();
 
         // Act
@@ -103,6 +109,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getScore()).isEqualTo(attendance.score());
         assertThat(actual.getHasPictures()).isEqualTo(Boolean.FALSE);
         assertThat(actual.getDescription()).isEqualTo(attendance.description());
+        assertThat(actual.getFriends()).isEqualTo("");
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
     }
@@ -121,6 +128,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description(null)
+                .friends(List.of())
                 .build();
 
         service.createAttendance(providerUid, attendance);
@@ -175,7 +183,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
 
     private BaseUserEntity buildAndSaveBaseUserEntity(String providerUid) {
         BaseUserEntity entity = BaseUserEntity.builder()
-                .email("Email")
+                .email(UUID.randomUUID().toString())
                 .providerUid(providerUid)
                 .build();
 

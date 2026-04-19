@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -31,12 +33,19 @@ public class AttendanceService implements AttendanceServicePort {
             throw new OdeehDuplicateException();
         }
 
+        String friends = attendance.friends()
+                .stream()
+                .map(baseUserRepository::findById)
+                .map(e -> e.getId().toString())
+                .collect(Collectors.joining(","));
+
         AttendanceEntity entity = AttendanceEntity.builder()
                 .eventId(eventEntity.getId())
                 .baseUserId(authenticatedUser.getId())
                 .score(attendance.score())
                 .hasPictures(Boolean.FALSE)
                 .description(attendance.description())
+                .friends(friends)
                 .build();
 
         return repository.save(entity);
