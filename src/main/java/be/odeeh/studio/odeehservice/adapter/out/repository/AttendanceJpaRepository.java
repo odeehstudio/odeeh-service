@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface AttendanceJpaRepository extends JpaRepository<AttendanceEntity, UUID> {
+    Boolean existsByEventIdAndBaseUserId(UUID eventId, UUID baseUserId);
 }

@@ -3,6 +3,7 @@ package be.odeeh.studio.odeehservice.application.service;
 import be.odeeh.studio.odeehservice.adapter.out.repository.*;
 import be.odeeh.studio.odeehservice.application.model.Attendance;
 import be.odeeh.studio.odeehservice.domain.entity.*;
+import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,34 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getDescription()).isEqualTo(attendance.description());
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    void createAttendance_shouldThrowOdeehDuplicateException_whenAttendanceAlreadyExists() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+
+        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        VenueEntity venueEntity = buildAndSaveVenueEntity();
+        ArtistEntity artistEntity = buildAndSaveArtistEntity();
+        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+
+        Attendance attendance = Attendance.builder()
+                .score(BigDecimal.TEN)
+                .eventId(eventEntity.getId())
+                .description(null)
+                .build();
+
+        service.createAttendance(providerUid, attendance);
+
+        // Act & Assert
+        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () ->
+                service.createAttendance(providerUid, attendance)
+        );
+
+        HttpStatus expectedStatus = HttpStatus.CONFLICT;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
 
     @Test

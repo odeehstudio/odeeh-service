@@ -8,6 +8,7 @@ import be.odeeh.studio.odeehservice.application.port.EventRepositoryPort;
 import be.odeeh.studio.odeehservice.domain.entity.AttendanceEntity;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.entity.EventEntity;
+import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,10 @@ public class AttendanceService implements AttendanceServicePort {
     public AttendanceEntity createAttendance(String authenticatedProviderUid, Attendance attendance) {
         BaseUserEntity authenticatedUser = baseUserRepository.findForAuthenticatedBaseUser(authenticatedProviderUid);
         EventEntity eventEntity = eventRepository.findById(attendance.eventId());
+
+        if (repository.existsByEventIdAndBaseUserId(eventEntity.getId(), authenticatedUser.getId())) {
+            throw new OdeehDuplicateException();
+        }
 
         AttendanceEntity entity = AttendanceEntity.builder()
                 .eventId(eventEntity.getId())
