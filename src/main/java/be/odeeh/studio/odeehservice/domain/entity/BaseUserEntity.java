@@ -20,7 +20,7 @@ public class BaseUserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String email;
 
     @Column(nullable = false, unique = true)

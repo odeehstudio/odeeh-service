@@ -1,6 +1,6 @@
 CREATE TABLE base_user (
     id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
-    email           VARCHAR(255)    NOT NULL    UNIQUE,
+    email           VARCHAR(255),
     provider_uid    VARCHAR(255)    NOT NULL    UNIQUE,
     created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP
@@ -40,7 +40,7 @@ CREATE TABLE venue (
     name            VARCHAR(255)    NOT NULL,
     address         VARCHAR(255)    NOT NULL,
     city            VARCHAR(100)    NOT NULL,
-    country         VARCHAR(2)    NOT NULL,
+    country         VARCHAR(2)      NOT NULL,
     created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP
 );
