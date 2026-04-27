@@ -23,7 +23,7 @@ public class BaseUserEntity {
     @Column(nullable = false, unique = true)
     private String providerUid;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)

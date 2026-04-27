@@ -1,6 +1,8 @@
 package be.odeeh.studio.odeehservice.application.service;
 
 import be.odeeh.studio.odeehservice.adapter.out.repository.BaseUserJpaRepository;
+import be.odeeh.studio.odeehservice.application.model.BaseUser;
+import be.odeeh.studio.odeehservice.domain.entity.BaseUserEnrollmentStatus;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,16 +30,52 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
     }
 
     @Test
-    void createBaseUser_shouldSaveAndReturnNewBaseUserEntity() {
+    void validateEnrollment_shouldReturnNeedsEnrollmentStatus_whenNoBaseUserEntityWithUid() {
         // Arrange
         String providerUid = UUID.randomUUID().toString();
 
         // Act
-        BaseUserEntity actual = service.createBaseUser(providerUid);
+        BaseUserEnrollmentStatus actual = service.validateEnrollment(providerUid);
+
+        // Arrange
+        assertThat(actual).isEqualTo(BaseUserEnrollmentStatus.NEEDS_ENROLLMENT);
+    }
+
+    @Test
+    void validateEnrollment_shouldReturnEnrolled_whenBaseUserEntityWithUid() {
+        // Arrange
+        String providerUid = UUID.randomUUID().toString();
+        BaseUserEntity existingEntity = BaseUserEntity.builder()
+                .username(UUID.randomUUID().toString())
+                .providerUid(providerUid)
+                .friendshipCode(UUID.randomUUID())
+                .build();
+
+        repository.save(existingEntity);
+
+        // Act
+        BaseUserEnrollmentStatus actual = service.validateEnrollment(providerUid);
+
+        // Assert
+        assertThat(actual).isEqualTo(BaseUserEnrollmentStatus.ENROLLED);
+    }
+
+    @Test
+    void createBaseUser_shouldSaveAndReturnNewBaseUserEntity() {
+        // Arrange
+        String username = "Odeeh";
+        String providerUid = UUID.randomUUID().toString();
+        BaseUser baseUser = BaseUser.builder()
+                .username(username)
+                .friendshipCode(UUID.randomUUID())
+                .build();
+
+        // Act
+        BaseUserEntity actual = service.createBaseUser(baseUser, providerUid);
 
         // Assert
         assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getUsername()).isNull();
+        assertThat(actual.getUsername()).isEqualTo(username);
         assertThat(actual.getProviderUid()).isEqualTo(providerUid);
         assertThat(actual.getFriendshipCode()).isNotNull();
         assertThat(actual.getCreatedAt()).isNotNull();
@@ -47,10 +85,16 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createBaseUser_withExistingBaseUser_shouldThrowException() {
         // Arrange
+        String username = "Odeeh";
         String providerUid = UUID.randomUUID().toString();
         UUID friendshipCode = UUID.randomUUID();
+        BaseUser baseUser = BaseUser.builder()
+                .username(username)
+                .friendshipCode(friendshipCode)
+                .build();
 
         BaseUserEntity existingEntity = BaseUserEntity.builder()
+                .username(username)
                 .providerUid(providerUid)
                 .friendshipCode(friendshipCode)
                 .build();
@@ -58,7 +102,7 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
         repository.save(existingEntity);
 
         // Act & Assert
-        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () -> service.createBaseUser(providerUid));
+        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () -> service.createBaseUser(baseUser, providerUid));
 
         HttpStatus expectedStatus = HttpStatus.CONFLICT;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());

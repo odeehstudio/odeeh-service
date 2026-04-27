@@ -1,7 +1,7 @@
 CREATE TABLE base_user (
     id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
     provider_uid    VARCHAR(255)    NOT NULL    UNIQUE,
-    username        VARCHAR(255)    NULL        UNIQUE,
+    username        VARCHAR(255)    NOT NULL    UNIQUE,
     friendship_code UUID            NOT NULL    DEFAULT gen_random_uuid(),
     created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP
