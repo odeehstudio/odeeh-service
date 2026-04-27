@@ -373,8 +373,8 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
 
     private BaseUserEntity buildAndSaveBaseUserEntity(String providerUid) {
         BaseUserEntity entity = BaseUserEntity.builder()
-                .email(UUID.randomUUID().toString())
                 .providerUid(providerUid)
+                .friendshipCode(UUID.randomUUID())
                 .build();
 
         return baseUserRepository.save(entity);

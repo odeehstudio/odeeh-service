@@ -24,10 +24,7 @@ public class BaseUserController {
     public ResponseEntity<BaseUserResponse> register(Authentication authentication) {
         FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
 
-         BaseUserEntity entity = port.createBaseUser(
-                 auth.getEmail(),
-                 auth.getUid()
-         );
+         BaseUserEntity entity = port.createBaseUser(auth.getUid());
 
          return ResponseEntity.ok(mapper.map(entity));
     }

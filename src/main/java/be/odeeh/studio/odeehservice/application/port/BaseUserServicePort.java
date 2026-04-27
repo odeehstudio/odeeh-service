@@ -4,5 +4,5 @@ import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 
 public interface BaseUserServicePort {
 
-    BaseUserEntity createBaseUser(String email, String uid);
+    BaseUserEntity createBaseUser(String uid);
 }

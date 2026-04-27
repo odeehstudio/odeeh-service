@@ -40,13 +40,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void sendFriendshipRequest_shouldSaveFriendShipRequest() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         // Act
         service.sendFriendshipRequest(requester.getProviderUid(), receiver.getId());
@@ -67,13 +65,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void sendFriendshipRequest_shouldThrowExceptionWhenFriendshipRelationAlreadyPresent() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -90,13 +86,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void dismissFriendshipRequest_shouldDeleteFriendshipRequestEntity() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -110,13 +104,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void dismissFriendshipRequest_shouldThrowExceptionWhenAuthenticatedUserIsNotRequester() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -133,13 +125,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void acceptFriendshipRequest_shouldUpdateExistingEntity() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -162,13 +152,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void acceptFriendshipRequest_shouldThrowExceptionWhenAuthenticatedUserIsNotReceiver() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -185,13 +173,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void denyFriendshipRequest_shouldDeleteFriendshipRequestEntity() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -205,13 +191,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void denyFriendshipRequest_shouldThrowExceptionWhenAuthenticatedUserIsNotReceiver() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity existingEntity = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
 
@@ -228,13 +212,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void listReceivedFriendshipRequests_shouldReturnListOfReceivedFriendshipRequestEntities() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity sendFriendshipRequest = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
         FriendshipRequestEntity receivedFriendshipRequest = buildAndSaveFriendshipRequestEntity(receiver, requester, FriendshipRequestStatus.PENDING);
@@ -254,13 +236,11 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void listAcceptedFriendshipRequests_shouldReturnListOfAcceptedFriendshipRequestEntities() {
         // Arrange
-        String requesterEmail = "requester@mail.com";
-        String receiverEmail = "receiver@mail.com";
         String requesterProviderUid = UUID.randomUUID().toString();
         String receiverProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterEmail, requesterProviderUid);
-        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverEmail, receiverProviderUid);
+        BaseUserEntity requester = buildAndSaveBaseUserEntity(requesterProviderUid);
+        BaseUserEntity receiver = buildAndSaveBaseUserEntity(receiverProviderUid);
 
         FriendshipRequestEntity pendingFriendshipRequest = buildAndSaveFriendshipRequestEntity(requester, receiver, FriendshipRequestStatus.PENDING);
         FriendshipRequestEntity acceptedFriendshipRequest = buildAndSaveFriendshipRequestEntity(receiver, requester, FriendshipRequestStatus.ACCEPTED);
@@ -277,13 +257,10 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getStatus()).isEqualTo(FriendshipRequestStatus.ACCEPTED);
     }
 
-    private BaseUserEntity buildAndSaveBaseUserEntity(
-            String email,
-            String providerUid
-    ) {
+    private BaseUserEntity buildAndSaveBaseUserEntity(String providerUid) {
         BaseUserEntity entity = BaseUserEntity.builder()
-                .email(email)
                 .providerUid(providerUid)
+                .friendshipCode(UUID.randomUUID())
                 .build();
 
         return baseUserRepository.save(entity);

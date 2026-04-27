@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface BaseUserJpaRepository extends JpaRepository<BaseUserEntity, UUID> {
 
-    boolean existsByEmailOrProviderUid(String email, String uid);
+    boolean existsByProviderUid(String uid);
 
     Optional<BaseUserEntity> findByProviderUid(String uid);
 }

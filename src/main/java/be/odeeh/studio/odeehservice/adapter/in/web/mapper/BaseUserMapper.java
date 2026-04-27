@@ -10,7 +10,7 @@ import org.mapstruct.MappingConstants;
 public interface BaseUserMapper {
 
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "providerUid", target = "providerUid")
+    @Mapping(source = "username", target = "username")
+    @Mapping(source = "friendshipCode", target = "friendshipCode")
     BaseUserResponse map(BaseUserEntity src);
 }

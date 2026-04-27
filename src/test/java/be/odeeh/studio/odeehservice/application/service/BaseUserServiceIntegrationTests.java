@@ -30,16 +30,16 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createBaseUser_shouldSaveAndReturnNewBaseUserEntity() {
         // Arrange
-        String email = "test@mail.com";
         String providerUid = UUID.randomUUID().toString();
 
         // Act
-        BaseUserEntity actual = service.createBaseUser(email, providerUid);
+        BaseUserEntity actual = service.createBaseUser(providerUid);
 
         // Assert
         assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getEmail()).isEqualTo(email);
+        assertThat(actual.getUsername()).isNull();
         assertThat(actual.getProviderUid()).isEqualTo(providerUid);
+        assertThat(actual.getFriendshipCode()).isNotNull();
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
     }
@@ -47,18 +47,18 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createBaseUser_withExistingBaseUser_shouldThrowException() {
         // Arrange
-        String email = "test@mail.com";
         String providerUid = UUID.randomUUID().toString();
+        UUID friendshipCode = UUID.randomUUID();
 
         BaseUserEntity existingEntity = BaseUserEntity.builder()
-                .email(email)
                 .providerUid(providerUid)
+                .friendshipCode(friendshipCode)
                 .build();
 
         repository.save(existingEntity);
 
         // Act & Assert
-        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () -> service.createBaseUser(email, providerUid));
+        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () -> service.createBaseUser(providerUid));
 
         HttpStatus expectedStatus = HttpStatus.CONFLICT;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());

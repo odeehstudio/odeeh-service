@@ -20,11 +20,14 @@ public class BaseUserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column
-    private String email;
-
     @Column(nullable = false, unique = true)
     private String providerUid;
+
+    @Column(unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private UUID friendshipCode;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

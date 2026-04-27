@@ -17,13 +17,13 @@ public class BaseUserMapperTests {
     void map_shouldReturnCorrectObject() {
         // Arrange
         UUID id = UUID.randomUUID();
-        String email = "test@mail.com";
-        String providerUid = UUID.randomUUID().toString();
+        String username = "Odeeh";
+        UUID friendshipCode = UUID.randomUUID();
 
         BaseUserEntity src = BaseUserEntity.builder()
                 .id(id)
-                .email(email)
-                .providerUid(providerUid)
+                .username(username)
+                .friendshipCode(friendshipCode)
                 .build();
 
         // Act
@@ -31,7 +31,7 @@ public class BaseUserMapperTests {
 
         // Assert
         assertThat(actual.id()).isEqualTo(id);
-        assertThat(actual.email()).isEqualTo(email);
-        assertThat(actual.providerUid()).isEqualTo(providerUid);
+        assertThat(actual.username()).isEqualTo(username);
+        assertThat(actual.friendshipCode()).isEqualTo(friendshipCode);
     }
 }
