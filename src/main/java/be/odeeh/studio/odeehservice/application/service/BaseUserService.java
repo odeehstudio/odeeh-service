@@ -40,4 +40,9 @@ public class BaseUserService implements BaseUserServicePort {
 
         return repository.save(entity);
     }
+
+    @Override
+    public Boolean isUsernameAvailable(String username) {
+        return !repository.existsByUsername(username);
+    }
 }

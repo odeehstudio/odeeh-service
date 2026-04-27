@@ -12,5 +12,7 @@ public interface BaseUserJpaRepository extends JpaRepository<BaseUserEntity, UUI
 
     boolean existsByUsernameOrProviderUid(String username, String uid);
 
+    boolean existsByUsername(String username);
+
     Optional<BaseUserEntity> findByProviderUid(String uid);
 }

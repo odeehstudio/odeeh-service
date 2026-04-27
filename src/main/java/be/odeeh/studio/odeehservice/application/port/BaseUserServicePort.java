@@ -9,4 +9,6 @@ public interface BaseUserServicePort {
     BaseUserEnrollmentStatus validateEnrollment(String uid);
 
     BaseUserEntity createBaseUser(BaseUser baseUser, String uid);
+
+    Boolean isUsernameAvailable(String username);
 }

@@ -108,4 +108,36 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
+
+    @Test
+    void isUsernameAvailable_shouldReturnTrue_whenUsernameIsAvailable() {
+        // Arrange
+        String username = "Odeeh";
+
+        // Act
+        Boolean actual = service.isUsernameAvailable(username);
+
+        // Assert
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void isUsernameAvailable_shouldReturnFalse_whenUsernameIsNotAvailable() {
+        // Arrange
+        String username = "Odeeh";
+
+        BaseUserEntity existingEntity = BaseUserEntity.builder()
+                .username(username)
+                .providerUid(UUID.randomUUID().toString())
+                .friendshipCode(UUID.randomUUID())
+                .build();
+
+        repository.save(existingEntity);
+
+        // Act
+        Boolean actual = service.isUsernameAvailable(username);
+
+        // Assert
+        assertThat(actual).isFalse();
+    }
 }

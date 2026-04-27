@@ -46,4 +46,11 @@ public class BaseUserController {
 
         return ResponseEntity.ok(mapper.map(entity));
     }
+
+    @PostMapping("/is-username-available")
+    public ResponseEntity<Boolean> isUsernameAvailable(@RequestBody BaseUserRequest request) {
+        Boolean isAvailable = port.isUsernameAvailable(mapper.trim(request.username()));
+
+        return ResponseEntity.ok(isAvailable);
+    }
 }
