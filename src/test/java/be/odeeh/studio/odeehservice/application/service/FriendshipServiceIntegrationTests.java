@@ -261,7 +261,6 @@ public class FriendshipServiceIntegrationTests extends IntegrationTestBase {
         BaseUserEntity entity = BaseUserEntity.builder()
                 .username(UUID.randomUUID().toString())
                 .providerUid(providerUid)
-                .friendshipCode(UUID.randomUUID())
                 .build();
 
         return baseUserRepository.save(entity);

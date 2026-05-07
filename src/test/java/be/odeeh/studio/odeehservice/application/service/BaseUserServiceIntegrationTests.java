@@ -1,8 +1,7 @@
 package be.odeeh.studio.odeehservice.application.service;
 
 import be.odeeh.studio.odeehservice.adapter.out.repository.BaseUserJpaRepository;
-import be.odeeh.studio.odeehservice.application.model.BaseUser;
-import be.odeeh.studio.odeehservice.domain.entity.BaseUserEnrollmentStatus;
+import be.odeeh.studio.odeehservice.application.model.Username;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,114 +29,136 @@ public class BaseUserServiceIntegrationTests extends IntegrationTestBase {
     }
 
     @Test
-    void validateEnrollment_shouldReturnNeedsEnrollmentStatus_whenNoBaseUserEntityWithUid() {
+    void isUserEnrolled_shouldReturnTrue() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
-
-        // Act
-        BaseUserEnrollmentStatus actual = service.validateEnrollment(providerUid);
-
-        // Arrange
-        assertThat(actual).isEqualTo(BaseUserEnrollmentStatus.NEEDS_ENROLLMENT);
-    }
-
-    @Test
-    void validateEnrollment_shouldReturnEnrolled_whenBaseUserEntityWithUid() {
-        // Arrange
-        String providerUid = UUID.randomUUID().toString();
-        BaseUserEntity existingEntity = BaseUserEntity.builder()
-                .username(UUID.randomUUID().toString())
-                .providerUid(providerUid)
-                .friendshipCode(UUID.randomUUID())
+        var uid = UUID.randomUUID().toString();
+        var entity = BaseUserEntity.builder()
+                .providerUid(uid)
+                .username("Odeeh")
                 .build();
 
-        repository.save(existingEntity);
+        repository.save(entity);
 
         // Act
-        BaseUserEnrollmentStatus actual = service.validateEnrollment(providerUid);
-
-        // Assert
-        assertThat(actual).isEqualTo(BaseUserEnrollmentStatus.ENROLLED);
-    }
-
-    @Test
-    void createBaseUser_shouldSaveAndReturnNewBaseUserEntity() {
-        // Arrange
-        String username = "Odeeh";
-        String providerUid = UUID.randomUUID().toString();
-        BaseUser baseUser = BaseUser.builder()
-                .username(username)
-                .friendshipCode(UUID.randomUUID())
-                .build();
-
-        // Act
-        BaseUserEntity actual = service.createBaseUser(baseUser, providerUid);
-
-        // Assert
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getUsername()).isEqualTo(username);
-        assertThat(actual.getProviderUid()).isEqualTo(providerUid);
-        assertThat(actual.getFriendshipCode()).isNotNull();
-        assertThat(actual.getCreatedAt()).isNotNull();
-        assertThat(actual.getUpdatedAt()).isNotNull();
-    }
-
-    @Test
-    void createBaseUser_withExistingBaseUser_shouldThrowException() {
-        // Arrange
-        String username = "Odeeh";
-        String providerUid = UUID.randomUUID().toString();
-        UUID friendshipCode = UUID.randomUUID();
-        BaseUser baseUser = BaseUser.builder()
-                .username(username)
-                .friendshipCode(friendshipCode)
-                .build();
-
-        BaseUserEntity existingEntity = BaseUserEntity.builder()
-                .username(username)
-                .providerUid(providerUid)
-                .friendshipCode(friendshipCode)
-                .build();
-
-        repository.save(existingEntity);
-
-        // Act & Assert
-        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () -> service.createBaseUser(baseUser, providerUid));
-
-        HttpStatus expectedStatus = HttpStatus.CONFLICT;
-        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
-        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
-    }
-
-    @Test
-    void isUsernameAvailable_shouldReturnTrue_whenUsernameIsAvailable() {
-        // Arrange
-        String username = "Odeeh";
-
-        // Act
-        Boolean actual = service.isUsernameAvailable(username);
+        var actual = service.isUserEnrolled(uid);
 
         // Assert
         assertThat(actual).isTrue();
     }
 
     @Test
-    void isUsernameAvailable_shouldReturnFalse_whenUsernameIsNotAvailable() {
+    void isUserEnrolled_shouldReturnFalse() {
         // Arrange
-        String username = "Odeeh";
-
-        BaseUserEntity existingEntity = BaseUserEntity.builder()
-                .username(username)
-                .providerUid(UUID.randomUUID().toString())
-                .friendshipCode(UUID.randomUUID())
-                .build();
-
-        repository.save(existingEntity);
+        var uid = UUID.randomUUID().toString();
 
         // Act
-        Boolean actual = service.isUsernameAvailable(username);
+        var actual = service.isUserEnrolled(uid);
 
         // Assert
         assertThat(actual).isFalse();
+    }
+
+    @Test
+    void isUsernameAvailable_shouldReturnTrue() {
+        // Arrange
+        var value = "Odeeh";
+        var request = Username.builder()
+                .value(value)
+                .build();
+
+        // Act
+        var actual = service.isUsernameAvailable(request);
+
+        // Assert
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void isUsernameAvailable_shouldReturnFalse() {
+        // Arrange
+        var value = "Odeeh";
+        var request = Username.builder()
+                .value(value)
+                .build();
+
+        var entity = BaseUserEntity.builder()
+                .providerUid(UUID.randomUUID().toString())
+                .username(value)
+                .build();
+
+        repository.save(entity);
+
+        // Act
+        var actual = service.isUsernameAvailable(request);
+
+        // Assert
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    void enroll_shouldThrowOdeehDuplicateException_whenUsernameExists() {
+        // Arrange
+        var uid = UUID.randomUUID().toString();
+        var value = "Odeeh";
+        var request = Username.builder()
+                .value(value)
+                .build();
+
+        var entity = BaseUserEntity.builder()
+                .providerUid(UUID.randomUUID().toString())
+                .username(value)
+                .build();
+
+        repository.save(entity);
+
+        // Act & Assert
+        var exception = assertThrows(OdeehDuplicateException.class, () -> service.enroll(uid, request));
+
+        var expectedStatus = HttpStatus.CONFLICT;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void enroll_shouldThrowOdeehDuplicateException_whenUidExists() {
+        // Arrange
+        var uid = UUID.randomUUID().toString();
+        var value = "Odeeh";
+        var request = Username.builder()
+                .value(value)
+                .build();
+
+        var entity = BaseUserEntity.builder()
+                .providerUid(uid)
+                .username(UUID.randomUUID().toString())
+                .build();
+
+        repository.save(entity);
+
+        // Act & Assert
+        var exception = assertThrows(OdeehDuplicateException.class, () -> service.enroll(uid, request));
+
+        var expectedStatus = HttpStatus.CONFLICT;
+        assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
+        assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
+    }
+
+    @Test
+    void enroll_shouldReturnBaseUserEntity() {
+        // Arrange
+        var uid = UUID.randomUUID().toString();
+        var value = "Odeeh";
+        var request = Username.builder()
+                .value(value)
+                .build();
+
+        // Act
+        var actual = service.enroll(uid, request);
+
+        // Assert
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual.getProviderUid()).isEqualTo(uid);
+        assertThat(actual.getUsername()).isEqualTo(value);
     }
 }

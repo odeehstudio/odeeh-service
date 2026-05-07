@@ -1,14 +1,13 @@
 package be.odeeh.studio.odeehservice.application.port;
 
-import be.odeeh.studio.odeehservice.application.model.BaseUser;
+import be.odeeh.studio.odeehservice.application.model.Username;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
-import be.odeeh.studio.odeehservice.domain.entity.BaseUserEnrollmentStatus;
 
 public interface BaseUserServicePort {
 
-    BaseUserEnrollmentStatus validateEnrollment(String uid);
+    Boolean isUserEnrolled(String uid);
 
-    BaseUserEntity createBaseUser(BaseUser baseUser, String uid);
+    Boolean isUsernameAvailable(Username request);
 
-    Boolean isUsernameAvailable(String username);
+    BaseUserEntity enroll(String uid, Username request);
 }
