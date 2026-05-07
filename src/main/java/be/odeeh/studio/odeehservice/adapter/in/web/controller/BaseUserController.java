@@ -54,6 +54,6 @@ public class BaseUserController {
                 requestMapper.toDomain(request)
         );
 
-        return ResponseEntity.ok(responseMapper.map(entity));
+        return ResponseEntity.ok(responseMapper.toResponse(entity));
     }
 }

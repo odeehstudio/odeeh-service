@@ -1,66 +1,49 @@
 package be.odeeh.studio.odeehservice.adapter.in.web.controller;
 
+import be.odeeh.studio.odeehservice.adapter.in.web.dto.FriendshipRequest;
+import be.odeeh.studio.odeehservice.adapter.in.web.dto.FriendshipResponse;
+import be.odeeh.studio.odeehservice.adapter.in.web.mapper.FriendshipRequestMapper;
+import be.odeeh.studio.odeehservice.adapter.in.web.mapper.FriendshipResponseMapper;
 import be.odeeh.studio.odeehservice.application.port.FriendshipServicePort;
 import be.odeeh.studio.odeehservice.config.security.FirebaseAuthentication;
-import lombok.AllArgsConstructor;
+import be.odeeh.studio.odeehservice.domain.model.FriendshipEntityQuery;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.List;
 
 @RestController
-@RequestMapping("/friendship")
-@AllArgsConstructor
+@RequestMapping("/api/v1//friendship")
+@RequiredArgsConstructor
 public class FriendshipController {
 
     private final FriendshipServicePort port;
+    private final FriendshipRequestMapper requestMapper;
+    private final FriendshipResponseMapper responseMapper;
 
-    @PostMapping("/request/{receiverId}")
-    public ResponseEntity<Void> request(Authentication authentication, @PathVariable UUID receiverId) {
+    @PostMapping("/connect")
+    public ResponseEntity<Void> connect(
+            Authentication authentication,
+            @RequestBody FriendshipRequest request
+    ) {
         FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
 
-        port.sendFriendshipRequest(
+        port.connect(
                 auth.getUid(),
-                receiverId
+                requestMapper.toDomain(request)
         );
 
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/dismiss/{requestId}")
-    public ResponseEntity<Void> dismiss(Authentication authentication, @PathVariable UUID requestId) {
+    @GetMapping
+    public ResponseEntity<List<FriendshipResponse>> fetchFriendships(Authentication authentication) {
         FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
 
-        port.dismissFriendshipRequest(
-                requestId,
-                auth.getUid()
-        );
+        List<FriendshipEntityQuery> entities = port.fetchFriendships(auth.getUid());
 
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/accept/{requestId}")
-    public ResponseEntity<Void> accept(Authentication authentication, @PathVariable UUID requestId) {
-        FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
-
-        port.acceptFriendshipRequest(
-                requestId,
-                auth.getUid()
-        );
-
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/deny/{requestId}")
-    public ResponseEntity<Void> deny(Authentication authentication, @PathVariable UUID requestId) {
-        FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
-
-        port.denyFriendshipRequest(
-                requestId,
-                auth.getUid()
-        );
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(responseMapper.toResponse(entities));
     }
 }

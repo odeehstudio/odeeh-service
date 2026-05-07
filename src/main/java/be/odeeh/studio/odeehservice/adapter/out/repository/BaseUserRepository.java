@@ -15,7 +15,7 @@ public class BaseUserRepository implements BaseUserRepositoryPort {
     private final BaseUserJpaRepository repository;
 
     @Override
-    public BaseUserEntity findForAuthenticatedBaseUser(String authenticatedProviderUid) {
+    public BaseUserEntity findByProviderUid(String authenticatedProviderUid) {
         return repository.findByProviderUid(authenticatedProviderUid).orElseThrow(OdeehNotFoundException::new);
     }
 

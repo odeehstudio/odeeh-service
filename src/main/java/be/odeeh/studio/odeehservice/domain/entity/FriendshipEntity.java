@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "friendship_request")
+@Table(name = "friendship")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FriendshipRequestEntity {
+public class FriendshipEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,22 +29,10 @@ public class FriendshipRequestEntity {
     @Column(nullable = false)
     private UUID receiverId;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private FriendshipRequestStatus status;
-
-    @Column
-    private LocalDateTime respondedAt;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public void acceptFriendshipRequest() {
-        this.status = FriendshipRequestStatus.ACCEPTED;
-        this.respondedAt = LocalDateTime.now();
-    }
 }

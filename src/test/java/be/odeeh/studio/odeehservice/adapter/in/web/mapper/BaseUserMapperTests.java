@@ -13,7 +13,7 @@ public class BaseUserMapperTests {
     private final BaseUserMapper mapper = Mappers.getMapper(BaseUserMapper.class);
 
     @Test
-    void map_shouldReturnCorrectObject() {
+    void toResponse_shouldReturnCorrectObject() {
         // Arrange
         var id = UUID.randomUUID();
         var username = "Odeeh";
@@ -23,7 +23,7 @@ public class BaseUserMapperTests {
                 .build();
 
         // Act
-        var actual = mapper.map(src);
+        var actual = mapper.toResponse(src);
 
         // Assert
         assertThat(actual.id()).isEqualTo(id);

@@ -9,5 +9,5 @@ public interface BaseUserMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")
-    BaseUserResponse map(BaseUserEntity src);
+    BaseUserResponse toResponse(BaseUserEntity src);
 }

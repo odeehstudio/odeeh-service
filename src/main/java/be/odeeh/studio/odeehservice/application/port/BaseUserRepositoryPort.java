@@ -5,7 +5,7 @@ import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import java.util.UUID;
 
 public interface BaseUserRepositoryPort {
-    BaseUserEntity findForAuthenticatedBaseUser(String authenticatedProviderUid);
+    BaseUserEntity findByProviderUid(String uid);
 
     BaseUserEntity findById(UUID id);
 }
