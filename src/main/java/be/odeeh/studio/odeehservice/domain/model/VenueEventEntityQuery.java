@@ -1,11 +1,11 @@
-package be.odeeh.studio.odeehservice.adapter.in.web.dto;
+package be.odeeh.studio.odeehservice.domain.model;
 
 import lombok.Builder;
 
 import java.util.UUID;
 
 @Builder
-public record EventResponse(
+public record VenueEventEntityQuery(
         UUID id,
         String artistName
 ) {

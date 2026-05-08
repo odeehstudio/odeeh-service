@@ -24,9 +24,6 @@ public class EventEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
     private UUID venueId;
 
     @Column(nullable = false)

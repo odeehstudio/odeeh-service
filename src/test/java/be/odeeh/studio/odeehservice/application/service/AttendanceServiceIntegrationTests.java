@@ -404,7 +404,6 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
 
     private EventEntity buildAndSaveEventEntity(UUID venueId, UUID artistId) {
         EventEntity entity = EventEntity.builder()
-                .name("Name")
                 .venueId(venueId)
                 .artistId(artistId)
                 .startTime(LocalDateTime.now())

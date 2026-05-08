@@ -49,7 +49,6 @@ CREATE TABLE event (
     id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
     venue_id        UUID            NOT NULL,
     artist_id       UUID            NOT NULL,
-    name            VARCHAR(255)    NOT NULL,
     start_time      TIMESTAMP       NOT NULL,
     end_time        TIMESTAMP       NOT NULL,
     created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
