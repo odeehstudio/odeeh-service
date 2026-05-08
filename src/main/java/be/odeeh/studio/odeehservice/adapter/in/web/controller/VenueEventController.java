@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("venue/{venueId}/event")
+@RequestMapping("/api/v1/venue/{venueId}/event")
 @AllArgsConstructor
 public class VenueEventController {
 

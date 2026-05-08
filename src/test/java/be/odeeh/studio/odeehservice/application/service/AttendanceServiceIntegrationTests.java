@@ -52,16 +52,16 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createAttendance_shouldSaveAndReturnNewAttendanceEntity() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
-        String friendProviderUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
+        var friendProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        BaseUserEntity friendBaseUserEntity = buildAndSaveBaseUserEntity(friendProviderUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var friendBaseUserEntity = buildAndSaveBaseUserEntity(friendProviderUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Description")
@@ -69,7 +69,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
                 .build();
 
         // Act
-        AttendanceEntity actual = service.createAttendance(providerUid, attendance);
+        var actual = service.createAttendance(providerUid, attendance);
 
         // Assert
         assertThat(actual.getId()).isNotNull();
@@ -86,14 +86,14 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createAttendance_shouldSaveAndReturnNewAttendanceEntity_withoutOptionals() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description(null)
@@ -101,7 +101,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
                 .build();
 
         // Act
-        AttendanceEntity actual = service.createAttendance(providerUid, attendance);
+        var actual = service.createAttendance(providerUid, attendance);
 
         // Assert
         assertThat(actual.getId()).isNotNull();
@@ -118,14 +118,14 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createAttendance_shouldThrowOdeehDuplicateException_whenAttendanceAlreadyExists() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description(null)
@@ -135,11 +135,11 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         service.createAttendance(providerUid, attendance);
 
         // Act & Assert
-        OdeehDuplicateException exception = assertThrows(OdeehDuplicateException.class, () ->
+        var exception = assertThrows(OdeehDuplicateException.class, () ->
                 service.createAttendance(providerUid, attendance)
         );
 
-        HttpStatus expectedStatus = HttpStatus.CONFLICT;
+        var expectedStatus = HttpStatus.CONFLICT;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -147,16 +147,16 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createAttendance_shouldThrowOdeehNotFoundException_whenNoBaseUserEntityFound() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
 
-        Attendance attendance = Attendance.builder().build();
+        var attendance = Attendance.builder().build();
 
         // Act & Assert
-        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+        var exception = assertThrows(OdeehNotFoundException.class, () ->
                 service.createAttendance(providerUid, attendance)
         );
 
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        var expectedStatus = HttpStatus.NOT_FOUND;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -164,20 +164,20 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void createAttendance_shouldThrowOdeehNotFoundException_whenNoEventEntityFound() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .eventId(UUID.randomUUID())
                 .build();
 
         // Act & Assert
-        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+        var exception = assertThrows(OdeehNotFoundException.class, () ->
                 service.createAttendance(providerUid, attendance)
         );
 
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        var expectedStatus = HttpStatus.NOT_FOUND;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -185,21 +185,21 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void deleteAttendance_shouldDeleteAttendanceEntity() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Description")
                 .friends(List.of())
                 .build();
 
-        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+        var attendanceEntity = service.createAttendance(providerUid, attendance);
 
         // Act
         service.deleteAttendance(providerUid, attendanceEntity.getId());
@@ -211,28 +211,28 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void deleteAttendance_shouldThrowOdeehNotFoundException_whenNoAttendanceEntityFound() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Description")
                 .friends(List.of())
                 .build();
 
-        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+        var attendanceEntity = service.createAttendance(providerUid, attendance);
 
         // Act & Assert
-        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+        var exception = assertThrows(OdeehNotFoundException.class, () ->
                 service.deleteAttendance(providerUid, UUID.randomUUID())
         );
 
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        var expectedStatus = HttpStatus.NOT_FOUND;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -240,30 +240,30 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void deleteAttendance_shouldThrowOdeehBadRequestException_whenAttendanceNotByAuthenticatedUser() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
-        String requesterUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
+        var requesterUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        BaseUserEntity requesterBaseUserEntity = buildAndSaveBaseUserEntity(requesterUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var requesterBaseUserEntity = buildAndSaveBaseUserEntity(requesterUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Description")
                 .friends(List.of())
                 .build();
 
-        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+        var attendanceEntity = service.createAttendance(providerUid, attendance);
 
         // Act & Assert
-        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
+        var exception = assertThrows(OdeehBadRequestException.class, () ->
                 service.deleteAttendance(requesterUid, attendanceEntity.getId())
         );
 
-        HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
+        var expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -271,25 +271,25 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void updateAttendance_shouldUpdateAttendanceEntity() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
-        String friendProviderUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
+        var friendProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        BaseUserEntity friendEntity = buildAndSaveBaseUserEntity(friendProviderUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var friendEntity = buildAndSaveBaseUserEntity(friendProviderUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance originalAttendance = Attendance.builder()
+        var originalAttendance = Attendance.builder()
                 .score(BigDecimal.ZERO)
                 .eventId(eventEntity.getId())
                 .description("Original")
                 .friends(List.of())
                 .build();
 
-        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, originalAttendance);
+        var attendanceEntity = service.createAttendance(providerUid, originalAttendance);
 
-        Attendance updatedAttendance = Attendance.builder()
+        var updatedAttendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Updated with friends")
@@ -297,7 +297,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
                 .build();
 
         // Act
-        AttendanceEntity actual = service.updateAttendance(providerUid, attendanceEntity.getId(), updatedAttendance);
+        var actual = service.updateAttendance(providerUid, attendanceEntity.getId(), updatedAttendance);
 
         // Assert
         assertThat(actual.getScore()).isEqualTo(updatedAttendance.score());
@@ -308,17 +308,17 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void updateAttendance_shouldThrowOdeehNotFoundException_whenAttendanceNotFound() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
         buildAndSaveBaseUserEntity(providerUid);
 
-        Attendance attendance = Attendance.builder().build();
+        var attendance = Attendance.builder().build();
 
         // Act & Assert
-        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+        var exception = assertThrows(OdeehNotFoundException.class, () ->
                 service.updateAttendance(providerUid, UUID.randomUUID(), attendance)
         );
 
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        var expectedStatus = HttpStatus.NOT_FOUND;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -326,30 +326,30 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void updateAttendance_shouldThrowOdeehBadRequestException_whenAttendanceNotByAuthenticatedUser() {
         // Arrange
-        String providerUid = UUID.randomUUID().toString();
-        String otherProviderUid = UUID.randomUUID().toString();
+        var providerUid = UUID.randomUUID().toString();
+        var otherProviderUid = UUID.randomUUID().toString();
 
-        BaseUserEntity baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
-        BaseUserEntity otherUserEntity = buildAndSaveBaseUserEntity(otherProviderUid);
-        VenueEntity venueEntity = buildAndSaveVenueEntity();
-        ArtistEntity artistEntity = buildAndSaveArtistEntity();
-        EventEntity eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
+        var baseUserEntity = buildAndSaveBaseUserEntity(providerUid);
+        var otherUserEntity = buildAndSaveBaseUserEntity(otherProviderUid);
+        var venueEntity = buildAndSaveVenueEntity();
+        var artistEntity = buildAndSaveArtistEntity();
+        var eventEntity = buildAndSaveEventEntity(venueEntity.getId(), artistEntity.getId());
 
-        Attendance attendance = Attendance.builder()
+        var attendance = Attendance.builder()
                 .score(BigDecimal.TEN)
                 .eventId(eventEntity.getId())
                 .description("Description")
                 .friends(List.of())
                 .build();
 
-        AttendanceEntity attendanceEntity = service.createAttendance(providerUid, attendance);
+        var attendanceEntity = service.createAttendance(providerUid, attendance);
 
         // Act & Assert
-        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () ->
+        var exception = assertThrows(OdeehBadRequestException.class, () ->
                 service.updateAttendance(otherProviderUid, attendanceEntity.getId(), attendance)
         );
 
-        HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
+        var expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
@@ -357,22 +357,22 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void updateAttendance_shouldThrowOdeehNotFoundException_whenAuthenticatedUserNotFound() {
         // Arrange
-        String nonExistentProviderUid = UUID.randomUUID().toString();
+        var nonExistentProviderUid = UUID.randomUUID().toString();
 
-        Attendance attendance = Attendance.builder().build();
+        var attendance = Attendance.builder().build();
 
         // Act & Assert
-        OdeehNotFoundException exception = assertThrows(OdeehNotFoundException.class, () ->
+        var exception = assertThrows(OdeehNotFoundException.class, () ->
                 service.updateAttendance(nonExistentProviderUid, UUID.randomUUID(), attendance)
         );
 
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        var expectedStatus = HttpStatus.NOT_FOUND;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
         assertThat(exception.getCode()).isEqualTo(expectedStatus.getReasonPhrase());
     }
 
     private BaseUserEntity buildAndSaveBaseUserEntity(String providerUid) {
-        BaseUserEntity entity = BaseUserEntity.builder()
+        var entity = BaseUserEntity.builder()
                 .username(UUID.randomUUID().toString())
                 .providerUid(providerUid)
                 .build();
@@ -381,7 +381,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     }
 
     private ArtistEntity buildAndSaveArtistEntity() {
-        ArtistEntity entity = ArtistEntity.builder()
+        var entity = ArtistEntity.builder()
                 .name("Name")
                 .type(ArtistType.GROUP)
                 .country("BE")
@@ -391,7 +391,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     }
 
     private VenueEntity buildAndSaveVenueEntity() {
-        VenueEntity entity = VenueEntity.builder()
+        var entity = VenueEntity.builder()
                 .type(VenueType.FESTIVAL)
                 .name("Name")
                 .address("Address")
@@ -403,7 +403,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
     }
 
     private EventEntity buildAndSaveEventEntity(UUID venueId, UUID artistId) {
-        EventEntity entity = EventEntity.builder()
+        var entity = EventEntity.builder()
                 .venueId(venueId)
                 .artistId(artistId)
                 .startTime(LocalDateTime.now())

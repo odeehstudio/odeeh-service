@@ -16,12 +16,12 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AttendanceMapperTests {
+public class AttendanceRequestMapperTests {
 
-    private final AttendanceMapper mapper = Mappers.getMapper(AttendanceMapper.class);
+    private final AttendanceRequestMapper mapper = Mappers.getMapper(AttendanceRequestMapper.class);
 
     @Test
-    void map_shouldMapRequestToApplicationModel() {
+    void map_shouldToDomainRequestToApplicationModel() {
         // Arrange
         String description = "  Test description  ";
         UUID friendUUID = UUID.randomUUID();
@@ -35,7 +35,7 @@ public class AttendanceMapperTests {
                 .build();
 
         // Act
-        Attendance attendance = mapper.map(src);
+        Attendance attendance = mapper.toDomain(src);
 
         // Assert
         assertThat(attendance.eventId()).isEqualTo(src.eventId());
@@ -45,7 +45,7 @@ public class AttendanceMapperTests {
     }
 
     @Test
-    void map_shouldMapRequestToApplicationModel_withoutOptionals() {
+    void map_shouldToDomainRequestToApplicationModel_withoutOptionals() {
         // Arrange
         AttendanceRequest src = AttendanceRequest.builder()
                 .eventId(UUID.randomUUID())
@@ -55,7 +55,7 @@ public class AttendanceMapperTests {
                 .build();
 
         // Act
-        Attendance attendance = mapper.map(src);
+        Attendance attendance = mapper.toDomain(src);
 
         // Assert
         assertThat(attendance.eventId()).isEqualTo(src.eventId());
@@ -65,7 +65,7 @@ public class AttendanceMapperTests {
     }
 
     @Test
-    void map_shouldThrowOdeehBadRequestException_whenEventIdIsNull() {
+    void toDomain_shouldThrowOdeehBadRequestException_whenEventIdIsNull() {
         // Arrange
         AttendanceRequest src = AttendanceRequest.builder()
                 .eventId(null)
@@ -73,7 +73,7 @@ public class AttendanceMapperTests {
                 .build();
 
         // Act & Assert
-        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () -> mapper.map(src));
+        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () -> mapper.toDomain(src));
 
         HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
@@ -81,7 +81,7 @@ public class AttendanceMapperTests {
     }
 
     @Test
-    void map_shouldThrowOdeehBadRequestException_whenScoreIsNull() {
+    void toDomain_shouldThrowOdeehBadRequestException_whenScoreIsNull() {
         // Arrange
         AttendanceRequest src = AttendanceRequest.builder()
                 .eventId(UUID.randomUUID())
@@ -89,7 +89,7 @@ public class AttendanceMapperTests {
                 .build();
 
         // Act & Assert
-        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () -> mapper.map(src));
+        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () -> mapper.toDomain(src));
 
         HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());
@@ -102,7 +102,7 @@ public class AttendanceMapperTests {
             "10.25",
             "5.1"
     })
-    void map_shouldThrowOdeehBadRequestException_whenNoValidScore(BigDecimal score) {
+    void toDomain_shouldThrowOdeehBadRequestException_whenNoValidScore(BigDecimal score) {
         // Arrange
         AttendanceRequest src = AttendanceRequest.builder()
                 .eventId(UUID.randomUUID())
@@ -110,7 +110,7 @@ public class AttendanceMapperTests {
                 .build();
 
         // Act & Assert
-        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () -> mapper.map(src));
+        OdeehBadRequestException exception = assertThrows(OdeehBadRequestException.class, () -> mapper.toDomain(src));
 
         HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
         assertThat(exception.getStatus()).isEqualTo(expectedStatus.value());

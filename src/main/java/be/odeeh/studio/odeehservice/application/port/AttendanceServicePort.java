@@ -6,9 +6,9 @@ import be.odeeh.studio.odeehservice.domain.entity.AttendanceEntity;
 import java.util.UUID;
 
 public interface AttendanceServicePort {
-    AttendanceEntity createAttendance(String authenticatedProviderUid, Attendance attendance);
+    AttendanceEntity createAttendance(String uid, Attendance attendance);
 
-    AttendanceEntity updateAttendance(String authenticatedProviderUid, UUID id, Attendance attendance);
+    AttendanceEntity updateAttendance(String uid, UUID id, Attendance attendance);
 
-    void deleteAttendance(String authenticatedProviderUid, UUID id);
+    void deleteAttendance(String uid, UUID id);
 }

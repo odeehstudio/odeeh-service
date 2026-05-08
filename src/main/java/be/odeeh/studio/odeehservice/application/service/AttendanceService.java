@@ -28,8 +28,8 @@ public class AttendanceService implements AttendanceServicePort {
     private final EventRepositoryPort eventRepository;
 
     @Override
-    public AttendanceEntity createAttendance(String authenticatedProviderUid, Attendance attendance) {
-        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(authenticatedProviderUid);
+    public AttendanceEntity createAttendance(String uid, Attendance attendance) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(uid);
         EventEntity eventEntity = eventRepository.findById(attendance.eventId());
 
         if (repository.existsByEventIdAndBaseUserId(eventEntity.getId(), authenticatedUser.getId())) {
@@ -49,8 +49,8 @@ public class AttendanceService implements AttendanceServicePort {
     }
 
     @Override
-    public AttendanceEntity updateAttendance(String authenticatedProviderUid, UUID id, Attendance attendance) {
-        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(authenticatedProviderUid);
+    public AttendanceEntity updateAttendance(String uid, UUID id, Attendance attendance) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(uid);
         AttendanceEntity entity = repository.findById(id).orElseThrow(OdeehNotFoundException::new);
 
         if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();
@@ -63,8 +63,8 @@ public class AttendanceService implements AttendanceServicePort {
     }
 
     @Override
-    public void deleteAttendance(String authenticatedProviderUid, UUID id) {
-        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(authenticatedProviderUid);
+    public void deleteAttendance(String uid, UUID id) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(uid);
         AttendanceEntity entity = repository.findById(id).orElseThrow(OdeehNotFoundException::new);
 
         if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();

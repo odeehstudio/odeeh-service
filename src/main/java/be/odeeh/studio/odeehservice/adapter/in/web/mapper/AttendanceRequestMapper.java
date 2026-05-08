@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface AttendanceMapper {
+public interface AttendanceRequestMapper extends ModelMapper {
 
     @BeforeMapping
     default void validate(AttendanceRequest src) {
@@ -34,12 +34,7 @@ public interface AttendanceMapper {
     @Mapping(source = "score", target = "score")
     @Mapping(source = "description", target = "description", qualifiedByName = "trim")
     @Mapping(source = "friends", target = "friends", qualifiedByName = "sanitizeUUIDs")
-    Attendance map(AttendanceRequest src);
-
-    @Named("trim")
-    default String trim(String src) {
-        return src != null ? src.trim() : null;
-    }
+    Attendance toDomain(AttendanceRequest src);
 
     @Named("sanitizeUUIDs")
     default List<UUID> sanitizeUUIDs(List<UUID> src) {
