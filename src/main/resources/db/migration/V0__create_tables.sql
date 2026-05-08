@@ -6,12 +6,10 @@ CREATE TABLE base_user (
     updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE friendship_request (
+CREATE TABLE friendship (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     requester_id    UUID        NOT NULL,
     receiver_id     UUID        NOT NULL,
-    status          VARCHAR(8)  NOT NULL,
-    responded_at    TIMESTAMP,
     created_at      TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP,
 
@@ -21,8 +19,8 @@ CREATE TABLE friendship_request (
     UNIQUE(requester_id, receiver_id)
 );
 
-CREATE INDEX idx_friendship_request_requester ON friendship_request(requester_id);
-CREATE INDEX idx_friendship_request_receiver  ON friendship_request(receiver_id);
+CREATE INDEX idx_friendship_requester ON friendship(requester_id);
+CREATE INDEX idx_friendship_receiver  ON friendship(receiver_id);
 
 CREATE TABLE artist (
     id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
