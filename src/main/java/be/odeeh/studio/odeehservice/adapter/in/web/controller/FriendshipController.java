@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1//friendship")
+@RequestMapping("/api/v1/friendship")
 @RequiredArgsConstructor
 public class FriendshipController {
 
@@ -30,10 +30,7 @@ public class FriendshipController {
     ) {
         FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
 
-        port.connect(
-                auth.getUid(),
-                requestMapper.toDomain(request)
-        );
+        port.connect(auth.getUid(), requestMapper.toDomain(request));
 
         return ResponseEntity.ok().build();
     }

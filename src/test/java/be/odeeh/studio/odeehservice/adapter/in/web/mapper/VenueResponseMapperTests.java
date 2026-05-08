@@ -1,6 +1,5 @@
 package be.odeeh.studio.odeehservice.adapter.in.web.mapper;
 
-import be.odeeh.studio.odeehservice.adapter.in.web.dto.VenueResponse;
 import be.odeeh.studio.odeehservice.domain.entity.VenueEntity;
 import be.odeeh.studio.odeehservice.domain.entity.VenueType;
 import org.junit.jupiter.api.Test;
@@ -10,14 +9,14 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class VenueMapperTests {
+public class VenueResponseMapperTests {
 
-    private final VenueMapper mapper = Mappers.getMapper(VenueMapper.class);
+    private final VenueResponseMapper mapper = Mappers.getMapper(VenueResponseMapper.class);
 
     @Test
-    void map_shouldReturnCorrectObject() {
+    void toResponse_shouldReturnCorrectObject() {
         // Arrange
-        VenueEntity src = VenueEntity.builder()
+        var src = VenueEntity.builder()
                 .id(UUID.randomUUID())
                 .type(VenueType.FESTIVAL)
                 .name("Name")
@@ -27,7 +26,7 @@ public class VenueMapperTests {
                 .build();
 
         // Act
-        VenueResponse actual = mapper.map(src);
+        var actual = mapper.toResponse(src);
 
         // Assert
         assertThat(actual.id()).isEqualTo(src.getId());

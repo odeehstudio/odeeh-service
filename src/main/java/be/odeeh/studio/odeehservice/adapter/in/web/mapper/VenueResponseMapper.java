@@ -10,11 +10,11 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface VenueMapper {
+public interface VenueResponseMapper {
 
-    default List<VenueResponse> map(Page<VenueEntity> src) {
+    default List<VenueResponse> toResponse(Page<VenueEntity> src) {
         return src.getContent().stream()
-                .map(this::map)
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -22,5 +22,5 @@ public interface VenueMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "city", target = "city")
     @Mapping(source = "country", target = "country")
-    VenueResponse map(VenueEntity src);
+    VenueResponse toResponse(VenueEntity src);
 }

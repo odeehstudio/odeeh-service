@@ -6,7 +6,6 @@ import be.odeeh.studio.odeehservice.domain.entity.VenueType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,15 +26,15 @@ public class VenueServiceIntegrationTests extends IntegrationTestBase {
     @Test
     void search_shouldReturnMatchingVenues() {
         // Arrange
-        String query = "QUERY";
-        Integer page = 0;
+        var query = "QUERY";
+        var page = 0;
 
-        VenueEntity foundVenue = buildAndSaveVenueEntity(query);
-        VenueEntity notFoundVenue = buildAndSaveVenueEntity("Not Found");
+        var foundVenue = buildAndSaveVenueEntity(query);
+        var notFoundVenue = buildAndSaveVenueEntity("Not Found");
 
         // Act
-        Page<VenueEntity> result = service.search(query, page);
-        VenueEntity actual = result.getContent().get(0);
+        var result = service.search(query, page);
+        var actual = result.getContent().get(0);
 
         // Assert
         assertThat(result).isNotNull();
@@ -44,7 +43,7 @@ public class VenueServiceIntegrationTests extends IntegrationTestBase {
     }
 
     private VenueEntity buildAndSaveVenueEntity(String name) {
-        VenueEntity entity = VenueEntity.builder()
+        var entity = VenueEntity.builder()
                 .type(VenueType.FESTIVAL)
                 .name(name)
                 .address("Address")

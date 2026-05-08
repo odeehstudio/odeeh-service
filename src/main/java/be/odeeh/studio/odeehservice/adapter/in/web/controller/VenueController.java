@@ -1,10 +1,10 @@
 package be.odeeh.studio.odeehservice.adapter.in.web.controller;
 
 import be.odeeh.studio.odeehservice.adapter.in.web.dto.VenueResponse;
-import be.odeeh.studio.odeehservice.adapter.in.web.mapper.VenueMapper;
+import be.odeeh.studio.odeehservice.adapter.in.web.mapper.VenueResponseMapper;
 import be.odeeh.studio.odeehservice.application.port.VenueServicePort;
 import be.odeeh.studio.odeehservice.domain.entity.VenueEntity;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/venue")
-@AllArgsConstructor
+@RequestMapping("/api/v1/venue")
+@RequiredArgsConstructor
 public class VenueController {
 
     private final VenueServicePort port;
-    private final VenueMapper mapper;
+    private final VenueResponseMapper responseMapper;
 
     @GetMapping
     public ResponseEntity<List<VenueResponse>> search(
@@ -29,6 +29,6 @@ public class VenueController {
     ) {
         Page<VenueEntity> entities = port.search(query, page);
 
-        return ResponseEntity.ok(mapper.map(entities));
+        return ResponseEntity.ok(responseMapper.toResponse(entities));
     }
 }
