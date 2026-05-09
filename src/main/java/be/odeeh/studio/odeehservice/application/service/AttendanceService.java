@@ -11,10 +11,12 @@ import be.odeeh.studio.odeehservice.domain.entity.EventEntity;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehDuplicateException;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
+import be.odeeh.studio.odeehservice.domain.model.AttendanceEntityQuery;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -70,6 +72,13 @@ public class AttendanceService implements AttendanceServicePort {
         if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();
 
         repository.delete(entity);
+    }
+
+    @Override
+    public List<AttendanceEntityQuery> fetchAttendances(String uid) {
+        BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(uid);
+
+        return repository.findAttendancesByUserId(authenticatedUser.getId());
     }
 
     private String map(Attendance attendance) {

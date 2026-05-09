@@ -1,14 +1,18 @@
 package be.odeeh.studio.odeehservice.adapter.in.web.controller;
 
 import be.odeeh.studio.odeehservice.adapter.in.web.dto.AttendanceRequest;
+import be.odeeh.studio.odeehservice.adapter.in.web.dto.AttendanceResponse;
 import be.odeeh.studio.odeehservice.adapter.in.web.mapper.AttendanceRequestMapper;
+import be.odeeh.studio.odeehservice.adapter.in.web.mapper.AttendanceResponseMapper;
 import be.odeeh.studio.odeehservice.application.port.AttendanceServicePort;
 import be.odeeh.studio.odeehservice.config.security.FirebaseAuthentication;
+import be.odeeh.studio.odeehservice.domain.model.AttendanceEntityQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,6 +22,7 @@ public class AttendanceController {
 
     private final AttendanceServicePort port;
     private final AttendanceRequestMapper requestMapper;
+    private final AttendanceResponseMapper responseMapper;
 
     @PostMapping
     public ResponseEntity<Void> createAttendance(
@@ -32,7 +37,7 @@ public class AttendanceController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> createAttendance(
+    public ResponseEntity<Void> updateAttendance(
             Authentication authentication,
             @PathVariable UUID id,
             @RequestBody AttendanceRequest request
@@ -54,5 +59,16 @@ public class AttendanceController {
         port.deleteAttendance(auth.getUid(), id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AttendanceResponse>> fetchAttendances(
+            Authentication authentication
+    ) {
+        FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
+
+        List<AttendanceEntityQuery> entities = port.fetchAttendances(auth.getUid());
+
+        return ResponseEntity.ok(responseMapper.toResponse(entities));
     }
 }

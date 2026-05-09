@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public record BaseUserResponse(
         UUID id,
-        String username,
-        UUID friendshipCode
+        String username
 ) {
 }
