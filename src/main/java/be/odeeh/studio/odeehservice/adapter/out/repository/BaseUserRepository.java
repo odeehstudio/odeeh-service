@@ -6,6 +6,7 @@ import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -22,5 +23,10 @@ public class BaseUserRepository implements BaseUserRepositoryPort {
     @Override
     public BaseUserEntity findById(UUID id) {
         return repository.findById(id).orElseThrow(OdeehNotFoundException::new);
+    }
+
+    @Override
+    public List<BaseUserEntity> findAllById(List<UUID> ids) {
+        return repository.findAllById(ids);
     }
 }

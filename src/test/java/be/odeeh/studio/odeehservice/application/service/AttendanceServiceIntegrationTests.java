@@ -78,7 +78,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getScore()).isEqualTo(attendance.score());
         assertThat(actual.getHasPictures()).isEqualTo(Boolean.FALSE);
         assertThat(actual.getDescription()).isEqualTo(attendance.description());
-        assertThat(actual.getFriends()).isEqualTo(friendBaseUserEntity.getId().toString());
+        assertThat(actual.getTaggedBaseUsers()).hasSize(1);
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
     }
@@ -110,7 +110,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         assertThat(actual.getScore()).isEqualTo(attendance.score());
         assertThat(actual.getHasPictures()).isEqualTo(Boolean.FALSE);
         assertThat(actual.getDescription()).isEqualTo(attendance.description());
-        assertThat(actual.getFriends()).isEqualTo("");
+        assertThat(actual.getTaggedBaseUsers()).isEmpty();
         assertThat(actual.getCreatedAt()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
     }
@@ -302,7 +302,7 @@ public class AttendanceServiceIntegrationTests extends IntegrationTestBase {
         // Assert
         assertThat(actual.getScore()).isEqualTo(updatedAttendance.score());
         assertThat(actual.getDescription()).isEqualTo(updatedAttendance.description());
-        assertThat(actual.getFriends()).isEqualTo(friendEntity.getId().toString());
+        assertThat(actual.getTaggedBaseUsers()).hasSize(1);
     }
 
     @Test

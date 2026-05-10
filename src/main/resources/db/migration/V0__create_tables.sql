@@ -63,7 +63,6 @@ CREATE TABLE attendance (
     score           DECIMAL(4, 2)   NOT NULL,
     description     TEXT,
     has_pictures    BOOLEAN         NOT NULL    DEFAULT FALSE,
-    friends         TEXT,
     created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
 
@@ -72,3 +71,29 @@ CREATE TABLE attendance (
 
     UNIQUE(event_id, base_user_id)
 );
+
+CREATE TABLE attendance_tagged_base_user (
+    id              UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
+    attendance_id   UUID            NOT NULL,
+    base_user_id    UUID            NOT NULL,
+    created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (attendance_id) REFERENCES attendance(id) ON DELETE CASCADE,
+    FOREIGN KEY (base_user_id) REFERENCES base_user(id) ON DELETE CASCADE,
+
+    UNIQUE (attendance_id, base_user_id)
+);
+
+CREATE TABLE feed_activity (
+    id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+    attendance_id   UUID        NOT NULL,
+    base_user_id    UUID        NOT NULL,
+    created_at      TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP   NOT NULL    DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (attendance_id) REFERENCES attendance(id) ON DELETE CASCADE,
+    FOREIGN KEY (base_user_id) REFERENCES base_user(id) ON DELETE CASCADE,
+
+    UNIQUE (attendance_id, base_user_id)
+)

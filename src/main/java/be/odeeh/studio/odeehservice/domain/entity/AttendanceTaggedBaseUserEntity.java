@@ -5,42 +5,28 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "attendance")
+@Table(name = "attendance_tagged_base_user")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceEntity {
+public class AttendanceTaggedBaseUserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID eventId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attendance_id", nullable = false)
+    private AttendanceEntity attendance;
 
     @Column(nullable = false)
     private UUID baseUserId;
-
-    @Column(nullable = false)
-    private BigDecimal score;
-
-    @Column
-    private String description;
-
-    @Column(nullable = false)
-    private Boolean hasPictures;
-
-    @OneToMany(mappedBy = "attendance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<AttendanceTaggedBaseUserEntity> taggedBaseUsers = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

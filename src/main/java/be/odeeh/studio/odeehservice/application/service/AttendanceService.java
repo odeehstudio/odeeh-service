@@ -6,6 +6,7 @@ import be.odeeh.studio.odeehservice.application.port.AttendanceServicePort;
 import be.odeeh.studio.odeehservice.application.port.BaseUserRepositoryPort;
 import be.odeeh.studio.odeehservice.application.port.EventRepositoryPort;
 import be.odeeh.studio.odeehservice.domain.entity.AttendanceEntity;
+import be.odeeh.studio.odeehservice.domain.entity.AttendanceTaggedBaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.entity.BaseUserEntity;
 import be.odeeh.studio.odeehservice.domain.entity.EventEntity;
 import be.odeeh.studio.odeehservice.domain.exception.OdeehBadRequestException;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,8 +44,9 @@ public class AttendanceService implements AttendanceServicePort {
                 .score(attendance.score())
                 .hasPictures(Boolean.FALSE)
                 .description(attendance.description())
-                .friends(map(attendance))
                 .build();
+
+        entity.setTaggedBaseUsers(map(attendance, entity));
 
         return repository.save(entity);
     }
@@ -59,7 +60,7 @@ public class AttendanceService implements AttendanceServicePort {
 
         entity.setScore(attendance.score());
         entity.setDescription(attendance.description());
-        entity.setFriends(map(attendance));
+        entity.setTaggedBaseUsers(map(attendance, entity));
 
         return repository.save(entity);
     }
@@ -81,11 +82,10 @@ public class AttendanceService implements AttendanceServicePort {
         return repository.findAttendancesByUserId(authenticatedUser.getId());
     }
 
-    private String map(Attendance attendance) {
-        return attendance.friends()
+    private List<AttendanceTaggedBaseUserEntity> map(Attendance attendance, AttendanceEntity entity) {
+        return baseUserRepository.findAllById(attendance.friends())
                 .stream()
-                .map(baseUserRepository::findById)
-                .map(e -> e.getId().toString())
-                .collect(Collectors.joining(","));
+                .map(e -> AttendanceTaggedBaseUserEntity.builder().attendance(entity).baseUserId(e.getId()).build())
+                .toList();
     }
 }
