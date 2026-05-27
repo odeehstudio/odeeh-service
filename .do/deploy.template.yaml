@@ -1,0 +1,8 @@
+spec:
+  name: odeeh-service
+  services:
+    - dockerfile_path: Dockerfile
+      git:
+        branch: main
+        repo_clone_url: https://github.com/odeehstudio/odeeh-service
+      name: odeeh-service
