@@ -7,7 +7,7 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-FROM eclipse-mosquitto
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
