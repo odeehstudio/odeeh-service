@@ -19,7 +19,7 @@ public class AttendanceEventListener {
     private final FeedActivityJpaRepository repository;
     private final FriendshipRequestJpaRepository friendshipRepository;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void onAttendanceCreated(AttendanceCreatedEvent event) {
         List<UUID> ids = new ArrayList<>(friendshipRepository.findByRequesterIdOrReceiverId(event.getBaseUserId(), event.getBaseUserId()).stream()
                 .map(e -> e.getReceiverId().equals(event.getBaseUserId()) ? e.getRequesterId() : e.getReceiverId())
