@@ -24,6 +24,7 @@ import java.util.UUID;
 public class AttendanceEntity extends AbstractAggregateRoot<AttendanceEntity> {
 
     @Id
+    @Builder.Default
     private UUID id = UUID.randomUUID();
 
     @Column(nullable = false)
