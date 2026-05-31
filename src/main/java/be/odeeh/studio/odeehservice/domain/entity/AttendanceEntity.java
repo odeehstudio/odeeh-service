@@ -24,8 +24,7 @@ import java.util.UUID;
 public class AttendanceEntity extends AbstractAggregateRoot<AttendanceEntity> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Column(nullable = false)
     private UUID eventId;
@@ -52,22 +51,20 @@ public class AttendanceEntity extends AbstractAggregateRoot<AttendanceEntity> {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public AttendanceEntity registerCreatedEvent() {
+    public void registerCreatedEvent() {
         registerEvent(AttendanceCreatedEvent.builder()
                 .baseUserId(this.baseUserId)
                 .attendanceId(this.id)
                 .build()
         );
 
-        return this;
     }
 
-    public AttendanceEntity registerDeletedEvent() {
+    public void registerDeletedEvent() {
         registerEvent(AttendanceDeletedEvent.builder()
                 .attendanceId(this.id)
                 .build()
         );
 
-        return this;
     }
 }
