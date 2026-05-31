@@ -2,6 +2,8 @@ package be.odeeh.studio.odeehservice.adapter.out.repository;
 
 import be.odeeh.studio.odeehservice.domain.entity.AttendanceEntity;
 import be.odeeh.studio.odeehservice.domain.model.AttendanceEntityQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,5 +34,5 @@ public interface AttendanceJpaRepository extends JpaRepository<AttendanceEntity,
     WHERE att.baseUserId = :userId
     ORDER BY att.createdAt DESC
     """)
-    List<AttendanceEntityQuery> findAttendancesByUserId(@Param("userId") UUID userId);
+    Page<AttendanceEntityQuery> findAttendancesByUserId(@Param("userId") UUID userId, Pageable pageable);
 }

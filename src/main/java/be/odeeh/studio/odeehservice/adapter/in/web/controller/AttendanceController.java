@@ -63,11 +63,12 @@ public class AttendanceController {
 
     @GetMapping
     public ResponseEntity<List<AttendanceResponse>> fetchAttendances(
-            Authentication authentication
+            Authentication authentication,
+            @RequestParam(defaultValue = "0") Integer page
     ) {
         FirebaseAuthentication auth = (FirebaseAuthentication) authentication;
 
-        List<AttendanceEntityQuery> entities = port.fetchAttendances(auth.getUid());
+        List<AttendanceEntityQuery> entities = port.fetchAttendances(auth.getUid(), page);
 
         return ResponseEntity.ok(responseMapper.toResponse(entities));
     }

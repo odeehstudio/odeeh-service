@@ -14,5 +14,5 @@ public interface AttendanceServicePort {
 
     void deleteAttendance(String uid, UUID id);
 
-    List<AttendanceEntityQuery> fetchAttendances(String uid);
+    List<AttendanceEntityQuery> fetchAttendances(String uid, Integer page);
 }

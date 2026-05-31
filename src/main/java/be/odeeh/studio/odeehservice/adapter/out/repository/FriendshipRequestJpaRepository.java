@@ -15,6 +15,8 @@ public interface FriendshipRequestJpaRepository extends JpaRepository<Friendship
 
     boolean existsByRequesterIdAndReceiverId(UUID requesterId, UUID receiverId);
 
+    List<FriendshipEntity> findByRequesterIdOrReceiverId(UUID requesterId, UUID receiverId);
+
     @Query("""
     SELECT new be.odeeh.studio.odeehservice.domain.model.FriendshipEntityQuery(
         CASE WHEN fr.requesterId = :userId THEN fr.receiverId ELSE fr.requesterId END,

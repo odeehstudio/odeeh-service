@@ -1,9 +1,12 @@
 package be.odeeh.studio.odeehservice.domain.entity;
 
+import be.odeeh.studio.odeehservice.domain.event.attendance.AttendanceCreatedEvent;
+import be.odeeh.studio.odeehservice.domain.event.attendance.AttendanceDeletedEvent;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,7 +21,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceEntity {
+public class AttendanceEntity extends AbstractAggregateRoot<AttendanceEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,4 +51,23 @@ public class AttendanceEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public AttendanceEntity registerCreatedEvent() {
+        registerEvent(AttendanceCreatedEvent.builder()
+                .baseUserId(this.baseUserId)
+                .attendanceId(this.id)
+                .build()
+        );
+
+        return this;
+    }
+
+    public AttendanceEntity registerDeletedEvent() {
+        registerEvent(AttendanceDeletedEvent.builder()
+                .attendanceId(this.id)
+                .build()
+        );
+
+        return this;
+    }
 }

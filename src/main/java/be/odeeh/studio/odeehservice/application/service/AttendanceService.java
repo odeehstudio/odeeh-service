@@ -15,6 +15,8 @@ import be.odeeh.studio.odeehservice.domain.exception.OdeehNotFoundException;
 import be.odeeh.studio.odeehservice.domain.model.AttendanceEntityQuery;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class AttendanceService implements AttendanceServicePort {
     private final AttendanceJpaRepository repository;
     private final BaseUserRepositoryPort baseUserRepository;
     private final EventRepositoryPort eventRepository;
+    private final Integer PAGE_SIZE = 20;
 
     @Override
     public AttendanceEntity createAttendance(String uid, Attendance attendance) {
@@ -48,6 +51,7 @@ public class AttendanceService implements AttendanceServicePort {
 
         entity.setTaggedBaseUsers(map(attendance, entity));
 
+        entity.registerCreatedEvent();
         return repository.save(entity);
     }
 
@@ -72,14 +76,16 @@ public class AttendanceService implements AttendanceServicePort {
 
         if (!entity.getBaseUserId().equals(authenticatedUser.getId())) throw new OdeehBadRequestException();
 
+        entity.registerDeletedEvent();
         repository.delete(entity);
     }
 
     @Override
-    public List<AttendanceEntityQuery> fetchAttendances(String uid) {
+    public List<AttendanceEntityQuery> fetchAttendances(String uid, Integer page) {
         BaseUserEntity authenticatedUser = baseUserRepository.findByProviderUid(uid);
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
 
-        return repository.findAttendancesByUserId(authenticatedUser.getId());
+        return repository.findAttendancesByUserId(authenticatedUser.getId(), pageable).getContent();
     }
 
     private List<AttendanceTaggedBaseUserEntity> map(Attendance attendance, AttendanceEntity entity) {
